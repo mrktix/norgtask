@@ -1,4 +1,2 @@
-all: main
-
-main: src/main.cpp
-	g++ -lncurses src/main.cpp -o bin/main
+all:
+	g++ -lncurses src/* -o bin/norgtask
