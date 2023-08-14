@@ -1,11 +1,24 @@
 #include "Renderer.h"
 #include "Time.h"
+#include "Config.h"
+#include "Tasklist.h"
 
 #include <ncurses.h>
+
 using namespace std;
 
 
 int Renderer::run(int argc, char** argv) {
+
+    filesystem::path configpath = "~/.config/norgtask/config";
+    Config* config = new Config(configpath);
+    Tasklist* tasklist = new Tasklist();
+
+    endwin();
+    tasklist->load_norg_workspace(config->norg_workspace());
+
+    return 0;
+
 
     printw("%d", (int) Time::utime());
     
