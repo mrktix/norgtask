@@ -1,10 +1,38 @@
 #include "Config.h"
 
-Config::Config(filesystem::path config_file) {
-    //read stuff from config file
+Config::Config(filesystem::path config_path) {
+    ifstream file;
+    file.open(config_path);
+    if (!file.is_open()) throw runtime_error("unable to open config file: " + config_path.string());
+
+    string error;
+    int linenum;
+    while (file) {
+        linenum++;
+        error = config_path.string()+" @ line "+to_string(linenum)+", ";
+        
+        string line;
+        getline(file, line);
+        boost::algorithm::trim(line);
+        if (line == "") continue;
+
+        size_t field_value_sep = line.find("=");
+        if (field_value_sep == -1) {
+            error += "failed to parse: '"+line+"'";
+            throw runtime_error(error);
+        }
+
+        string field = line.substr(0, field_value_sep);
+        string value = line.substr(field_value_sep+1);
+        boost::algorithm::trim(field);
+        boost::algorithm::trim(value);
+
+        options[field] = value;
+    }
+
+    file.close();
 }
 
-filesystem::path Config::norg_workspace() {
-    filesystem::path ws = "/home/arleok/wiki/";
-    return ws;
+string Config::option(string key) {
+    return options[key];
 }

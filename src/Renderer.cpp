@@ -2,6 +2,7 @@
 #include "Time.h"
 #include "Config.h"
 #include "Tasklist.h"
+#include "Ui.h"
 
 #include <ncurses.h>
 
@@ -9,16 +10,21 @@ using namespace std;
 
 
 int Renderer::run(int argc, char** argv) {
-
-    filesystem::path configpath = "~/.config/norgtask/config";
-    Config* config = new Config(configpath);
-    Tasklist* tasklist = new Tasklist();
-
     endwin();
-    tasklist->load_norg_workspace(config->norg_workspace());
+
+    string configpathstr =getenv("XDG_CONFIG_HOME");
+    configpathstr += "/norgtask/config";
+
+    filesystem::path configpath = configpathstr;
+    Config* config = new Config(configpath);
+    Ui* ui = new Ui(config);
+
+    while(true) {
+        ui->draw();
+        return 0;
+    }
 
     return 0;
-
 
     printw("%d", (int) Time::utime());
     
