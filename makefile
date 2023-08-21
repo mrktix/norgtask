@@ -1,2 +1,4 @@
 all:
-	g++ -lncurses src/*.cpp -o bin/norgtask
+	g++ -fsanitize=address -fno-omit-frame-pointer \
+	-lncurses \
+	src/*.cpp -o bin/norgtask

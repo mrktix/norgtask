@@ -36,3 +36,11 @@ Config::Config(filesystem::path config_path) {
 string Config::option(string key) {
     return options[key];
 }
+
+string Config::path(string key) {
+    string ret = options[key];
+    if (ret[0] == '~') {
+        ret = getenv("HOME") + ret.substr(1);
+    }
+    return ret;
+}

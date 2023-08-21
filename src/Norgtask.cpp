@@ -1,6 +1,8 @@
 #include "Renderer.h"
 #include <ncurses.h>
 
+// ~/wiki/softwaredev/norgtask.norg
+
 int init_curses() {
     initscr(); // sets up mem and clears screen
     curs_set(0); // hides cursor
@@ -21,7 +23,13 @@ int init_curses() {
 int main(int argc, char** argv) {
     if (init_curses() == -1) return -1;
 
-    int result = Renderer::run(argc, argv);
+    int result;
+    try {
+        result = Renderer::run(argc, argv);
+    } catch (...) {
+        endwin();
+        throw;
+    }
 
     endwin();
     return result;

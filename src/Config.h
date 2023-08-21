@@ -12,6 +12,7 @@ class Config {
     public:
         Config(filesystem::path config_path);
         string option(string key);
+        string path(string key);
     private:
         unordered_map<string, string> options;
 };

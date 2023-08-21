@@ -10,8 +10,6 @@ using namespace std;
 
 
 int Renderer::run(int argc, char** argv) {
-    endwin();
-
     string configpathstr =getenv("XDG_CONFIG_HOME");
     configpathstr += "/norgtask/config";
 
@@ -21,6 +19,8 @@ int Renderer::run(int argc, char** argv) {
 
     while(true) {
         ui->draw();
+        getch();
+        endwin();
         return 0;
     }
 
