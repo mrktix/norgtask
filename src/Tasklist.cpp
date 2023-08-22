@@ -87,6 +87,7 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
             if (!filesystem::is_regular_file(subentry)) continue;
             string subentry_name = subentry.filename().string();
             if (subentry_name[0] == '.') continue;
+            if (subentry_name.substr(subentry_name.size()-4) != ".norg") continue;
 
             current_id = load_norg_file(subentry, current_id);
 
