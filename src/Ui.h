@@ -12,13 +12,14 @@ using namespace std;
 class Ui {
     public:
         Ui(Config* config);
-        void draw();
+        bool draw(bool collect_input);
     private:
         string format_task_name(task t);
         void update_vars();
         void draw_outline();
         void draw_tasks();
         void draw_contexts();
+        bool input();
 
         Tasklist* tasklist;
         Config* config;

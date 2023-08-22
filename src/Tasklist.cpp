@@ -87,7 +87,10 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
             if (!filesystem::is_regular_file(subentry)) continue;
             string subentry_name = subentry.filename().string();
             if (subentry_name[0] == '.') continue;
-            if (subentry_name.substr(subentry_name.size()-4) != ".norg") continue;
+            if (subentry.extension() != ".norg") {
+                cout << "Tasklist::load_norg_workspace skipping non norg file: " << subentry_name << endl;
+                continue;
+            }
 
             current_id = load_norg_file(subentry, current_id);
 

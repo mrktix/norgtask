@@ -17,13 +17,12 @@ int Renderer::run(int argc, char** argv) {
     Config* config = new Config(configpath);
     Ui* ui = new Ui(config);
 
+    ui->draw(false);
     while(true) {
-        ui->draw();
-        getch();
-        endwin();
-        return 0;
+        if (ui->draw(true)) break;
     }
 
+    endwin();
     return 0;
 
     printw("%d", (int) Time::utime());

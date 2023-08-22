@@ -7,7 +7,15 @@ Ui::Ui(Config* config) {
     tasklist = new Tasklist((filesystem::path) config->path("norg_workspace"));
 }
 
-void Ui::draw() {
+bool Ui::input() {
+    char input = getch();
+    if (input == ';') return true;
+}
+
+bool Ui::draw(bool collect_input) {
+    if (collect_input && input()) return true;
+
+    update_vars();
     draw_outline();
     switch (current_mode) {
         case tasks:
@@ -17,11 +25,14 @@ void Ui::draw() {
             draw_contexts();
             break;
     }
+    refresh();
+    return false;
 }
 
 void Ui::update_vars() {
     maxx = getmaxx(stdscr);
     maxy = getmaxy(stdscr);
+    cout << "Ui::update_vars(): maxx: " << maxx << ", maxy: " << maxy << endl;
 }
 
 void Ui::draw_outline() {
@@ -36,10 +47,12 @@ void Ui::draw_tasks() {
     int available_lines = maxy-2;
     cout << "Ui::draw_tasks(): about to access tasklist public field" << endl;
     int task_count = tasklist->current_tasks_sorted.size();
-    vector<task> test = tasklist->get_current_tasks_sorted();
-    cout << "Ui::draw_tasks(): finished accessing tasklist public field, task_count: " << task_count << endl;
-    cout << "Ui::draw_tasks(): finished accessing tasklist public field, task_count function: " << test.size() << endl;
     int end = min(available_lines, task_count);
+
+    cout << "availines:" << available_lines << endl;
+    cout << "task_count:" << task_count << endl;
+    
+    cout << "Ui::draw_tasks(): amount of lines to print: " << end << endl;
 
     for (int i = 0; i < end; i++) {
         mvprintw(i+1, 1, (tasklist->current_tasks_sorted)[i].name.c_str());
