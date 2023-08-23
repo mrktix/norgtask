@@ -9,7 +9,9 @@ Ui::Ui(Config* config) {
 
 bool Ui::input() {
     char input = getch();
+
     if (input == ';') return true;
+    else return false;
 }
 
 bool Ui::draw(bool collect_input) {

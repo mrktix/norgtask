@@ -12,10 +12,15 @@ void Tasklist::sort_tasks() {
     cout << "Tasklist::sort_tasks(): current_context: " << current_context.id_begin << " - " << current_context.id_end << endl;
 
     for (int i = current_context.id_begin; i < current_context.id_end; i++) {
-        cout << "Tasklist::sort_tasks() entered for loop" << endl;
         task insert = all_tasks[i];
+        cout << "Tasklist::sort_tasks(): inserting task" << endl;
+        cout << "    name = " << insert.name << endl;
+        cout << "    time_end = " << insert.time_end << endl;
+        cout << "    id = " << insert.id << endl;
+
 
         if (current_tasks_sorted.size() == 0) {
+            cout << "Tasklist::sort_tasks(): inserting at start, list is empty" << endl;
             current_tasks_sorted.push_back(insert);
             continue;
         }
@@ -23,10 +28,12 @@ void Tasklist::sort_tasks() {
         long insert_end = insert.time_end;
         bool inserted = false;
 
-        for (int j = 0; j < current_tasks_sorted.size(); j++) {
+        for (int j = current_tasks_sorted.size()-1; j >= 0; j--) {
             long marker_end = current_tasks_sorted[j].time_end;
+            cout << "    comparing to: " << current_tasks_sorted[j].name << ", end: " << marker_end << endl;
 
             if (insert_end >= marker_end) { // tasks have same end time, compare other criteria
+                cout << "    inserting right after this task" << endl;
                 // since marker has already been inserted, it has a lower id (appears earlier in workspace)
                 // so insert should be inserted right after it
                 current_tasks_sorted.insert(current_tasks_sorted.begin()+j+1, insert);
@@ -86,7 +93,6 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
         for (const filesystem::path subentry : filesystem::directory_iterator(entry)) {
             if (!filesystem::is_regular_file(subentry)) continue;
             string subentry_name = subentry.filename().string();
-            if (subentry_name[0] == '.') continue;
             if (subentry.extension() != ".norg") {
                 cout << "Tasklist::load_norg_workspace skipping non norg file: " << subentry_name << endl;
                 continue;
@@ -155,7 +161,10 @@ int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id) {
 
                 all_tasks.back().id = current_id;
                 current_id++;
-                cout << "Tasklist::load_norg_file(): added a task, all_tasks len: " << all_tasks.size() << endl;
+                cout << "Tasklist::load_norg_file(): added a task" << endl;
+                cout << "    name = " << all_tasks.back().name << endl;
+                cout << "    time_end = " << all_tasks.back().time_end << endl;
+                cout << "    id = " << all_tasks.back().id << endl;
 
                 readingtask = false;
                 fill_n(filled_field, 4, false);
