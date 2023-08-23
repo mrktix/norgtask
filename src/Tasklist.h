@@ -21,7 +21,7 @@ class Tasklist {
         vector<task> current_tasks_sorted;
     private:
         void load_norg_workspace(filesystem::path norg_workspace);
-        int load_norg_file(const filesystem::path norg_file, int current_id);
+        int load_norg_file(const filesystem::path norg_file, int current_id, string folder_name, string file_name, short folder_col, short file_col);
         context get_current_context();
 
         vector<task> all_tasks;

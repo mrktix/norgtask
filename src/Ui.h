@@ -19,6 +19,7 @@ class Ui {
         void draw_outline();
         void draw_tasks();
         void draw_contexts();
+        string task_format(task t);
         bool input();
 
         Tasklist* tasklist;

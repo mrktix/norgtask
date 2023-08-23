@@ -78,6 +78,8 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
     root_context.id_begin = current_id;
     root_context.children.clear();
 
+    int folder_col; //col from 1 to 8
+
     //loop through the directories in norg workspace
     for (const filesystem::path entry : filesystem::directory_iterator(norg_workspace)) {
         cout << "Tasklist::load_norg_workspace(): first for loop begin, dir: " << entry.string() << endl;
@@ -89,6 +91,7 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
         con.name = entry.filename().string();
         con.id_begin = current_id;
 
+        int file_col;
         //loop through all the files in the 
         for (const filesystem::path subentry : filesystem::directory_iterator(entry)) {
             if (!filesystem::is_regular_file(subentry)) continue;
@@ -98,18 +101,21 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
                 continue;
             }
 
-            current_id = load_norg_file(subentry, current_id);
 
             context subcon;
 
             subcon.name = subentry_name;
             subcon.id_begin = current_id;
+            
+            current_id = load_norg_file(subentry, current_id, con.name, subentry_name);
 
             subcon.id_end = current_id;
+            con.children.push_back(subcon);
         }
 
         con.id_end = current_id;
         root_context.children.push_back(con);
+        folder_col++;
     }
 
     root_context.id_end = current_id;
@@ -118,7 +124,7 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
     sort_tasks();
 }
 
-int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id) {
+int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, string folder_name, string file_name, short folder_col, short file_col) {
     cout << "Tasklist::load_norg_file(): function begin" << endl;
     // read through the file and extract the tasks to all_tasks, incrementing current_id
     ifstream file;
@@ -158,6 +164,12 @@ int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id) {
                 if (!filled_field[end]) {
                     all_tasks.back().time_end = LONG_MAX;
                 }
+
+                int path_len = 3;
+                all_tasks.back().folder = folder.substr(0, path_len);
+                all_tasks.back().file = file.substr(0, path_len);
+                all_tasks.back().folder_color = folder_col;
+                all_tasks.back().file_color = file_col;
 
                 all_tasks.back().id = current_id;
                 current_id++;

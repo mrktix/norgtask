@@ -4,7 +4,8 @@ using namespace std;
 
 struct task {
     string name;
-    string tag;
     long time_begin, time_end;
     int id;
+    string folder, file, tag;
+    short folder_color, file_color;
 };

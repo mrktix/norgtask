@@ -61,6 +61,10 @@ void Ui::draw_tasks() {
     }
 }
 
+string Ui::task_format(task t) {
+
+}
+
 void Ui::draw_contexts() {
 
 }
