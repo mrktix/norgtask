@@ -63,7 +63,7 @@ void Ui::print_task(task t) {
     attroff(COLOR_PAIR(folder_col));
 
     attron(COLOR_PAIR(file_col));
-    printw((file + "/").c_str());
+    printw((file + " ").c_str());
     attroff(COLOR_PAIR(file_col));
 
     printw((t.name + " (" + t.tag + ")").c_str());
