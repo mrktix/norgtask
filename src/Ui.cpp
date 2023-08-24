@@ -15,6 +15,7 @@ bool Ui::input() {
 
 bool Ui::draw(bool collect_input) {
     if (collect_input && input()) return true;
+    clear();
 
     update_vars();
     draw_outline();
@@ -53,20 +54,22 @@ void Ui::draw_tasks() {
 }
 
 void Ui::print_task(task t) {
-    int folder_col = t.folder_color%7+1;
-    int file_col = t.file_color%7+1;
+    int folder_col = t.folder_color%6+1;
+    int file_col = t.file_color%6+1;
     string folder = t.folder.substr((t.folder[0] == '.')? 1 : 0, 3);
     string file = t.file.substr((t.file[0] == '.')? 1 : 0, 3);
 
+    string final = folder + "/" + file + " " + t.name + " (" + t.tag + ")";
+
     attron(COLOR_PAIR(folder_col));
-    printw((folder + "/").c_str());
+    printw(final.substr(0,4).c_str());
     attroff(COLOR_PAIR(folder_col));
 
     attron(COLOR_PAIR(file_col));
-    printw((file + " ").c_str());
+    printw(final.substr(4,4).c_str());
     attroff(COLOR_PAIR(file_col));
 
-    printw((t.name + " (" + t.tag + ")").c_str());
+    printw(final.substr(8, maxx - 2 - 8).c_str());
 }
 
 void Ui::draw_contexts() {
