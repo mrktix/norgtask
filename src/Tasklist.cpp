@@ -1,26 +1,19 @@
 #include "Tasklist.h"
-#include <string>
 
-Tasklist::Tasklist(filesystem::path norg_workspace) {
-    this->load_norg_workspace(norg_workspace);
+Tasklist::Tasklist(const Config* config)
+:config(config)
+{
+    this->load_norg_workspace();
 }
 
 void Tasklist::sort_tasks() {
-    cout << "Tasklist::sort_tasks() function begin" << endl;
     context current_context = get_current_context();
     vector<task> ret;
-    cout << "Tasklist::sort_tasks(): current_context: " << current_context.id_begin << " - " << current_context.id_end << endl;
 
     for (int i = current_context.id_begin; i < current_context.id_end; i++) {
         task insert = all_tasks[i];
-        cout << "Tasklist::sort_tasks(): inserting task" << endl;
-        cout << "    name = " << insert.name << endl;
-        cout << "    time_end = " << insert.time_end << endl;
-        cout << "    id = " << insert.id << endl;
-
 
         if (current_tasks_sorted.size() == 0) {
-            cout << "Tasklist::sort_tasks(): inserting at start, list is empty" << endl;
             current_tasks_sorted.push_back(insert);
             continue;
         }
@@ -30,12 +23,10 @@ void Tasklist::sort_tasks() {
 
         for (int j = current_tasks_sorted.size()-1; j >= 0; j--) {
             long marker_end = current_tasks_sorted[j].time_end;
-            cout << "    comparing to: " << current_tasks_sorted[j].name << ", end: " << marker_end << endl;
 
-            if (insert_end >= marker_end) { // tasks have same end time, compare other criteria
-                cout << "    inserting right after this task" << endl;
+            if (insert_end >= marker_end) {
                 // since marker has already been inserted, it has a lower id (appears earlier in workspace)
-                // so insert should be inserted right after it
+                // so insert should be inserted right after it even if the time is equal
                 current_tasks_sorted.insert(current_tasks_sorted.begin()+j+1, insert);
                 inserted = true;
                 break;
@@ -46,16 +37,11 @@ void Tasklist::sort_tasks() {
             current_tasks_sorted.insert(current_tasks_sorted.begin(), insert);
         }
     }
-    cout << "Tasklist::sort_tasks() function end, current_tasks_sorted len: " << current_tasks_sorted.size() << endl;
-    cout << "Tasklist::sort_tasks() function end, all_tasks len: " << all_tasks.size() << endl;
 }
 
 context Tasklist::get_current_context() {
-    cout << "Tasklist::get_current_context(): function begin" << endl;
     int size = current_context_path.size();
     if (size == 0) {
-        cout << "Tasklist::get_current_context(): function end 0" << endl;
-        cout << "Tasklist::get_current_context(): root_context id range: " << root_context.id_begin << " - " << root_context.id_end << endl;
         return root_context;
     } else if (size == 1) {
         return root_context.children[current_context_path[0]];
@@ -66,8 +52,9 @@ context Tasklist::get_current_context() {
     throw runtime_error("current_context_path has a length greater than 2");
 }
 
-void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
-    cout << "Tasklist::load_norg_workspace(): function begin" << endl;
+void Tasklist::load_norg_workspace() {
+    filesystem::path norg_workspace = config->path("norg_workspace");
+
     if (!exists(norg_workspace)) {
         throw invalid_argument("norg workspace specified in config does not exist: " + norg_workspace.string());
     }
@@ -82,7 +69,6 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
 
     // loop through the directories in norg workspace
     for (const filesystem::path entry : filesystem::directory_iterator(norg_workspace)) {
-        cout << "Tasklist::load_norg_workspace(): first for loop begin, dir: " << entry.string() << endl;
         if (!filesystem::is_directory(entry)) continue;
         string entry_name = entry.filename().string();
         if (entry_name[0] == '.') continue;
@@ -96,21 +82,19 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
         for (const filesystem::path subentry : filesystem::directory_iterator(entry)) {
             if (!filesystem::is_regular_file(subentry)) continue;
             string subentry_name = subentry.filename().string();
-            if (subentry.extension() != ".norg") {
-                cout << "Tasklist::load_norg_workspace skipping non norg file: " << subentry_name << endl;
-                continue;
-            }
-
+            if (subentry.extension() != ".norg") continue;
 
             context subcon;
 
             subcon.name = subentry_name;
             subcon.id_begin = current_id;
-            
-            current_id = load_norg_file(subentry, current_id, con.name, subentry_name, folder_col%8 + 1, file_col%8 + 1);
+
+            current_id = load_norg_file(subentry, current_id, con.name, folder_col, file_col);
 
             subcon.id_end = current_id;
             con.children.push_back(subcon);
+
+            file_col++;
         }
 
         con.id_end = current_id;
@@ -120,12 +104,10 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
 
     root_context.id_end = current_id;
 
-    cout << "Tasklist::load_norg_workspace(): function end, current_id: " << current_id << endl;
     sort_tasks();
 }
 
-int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, string folder_name, string file_name, short folder_col, short file_col) {
-    cout << "Tasklist::load_norg_file(): function begin" << endl;
+int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, string folder_name, short folder_col, short file_col) {
     // read through the file and extract the tasks to all_tasks, incrementing current_id
     ifstream file;
     file.open(norg_file);
@@ -165,19 +147,13 @@ int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, s
                     all_tasks.back().time_end = LONG_MAX;
                 }
 
-                int path_len = 3;
-                all_tasks.back().folder = folder_name.substr(0, path_len);
-                all_tasks.back().file = file_name.substr(0, path_len);
-                all_tasks.back().tag = all_tasks.back().tag.substr(0, path_len);
+                all_tasks.back().folder = folder_name;
+                all_tasks.back().file = norg_file.filename().string();
                 all_tasks.back().folder_color = folder_col;
                 all_tasks.back().file_color = file_col;
 
                 all_tasks.back().id = current_id;
                 current_id++;
-                cout << "Tasklist::load_norg_file(): added a task" << endl;
-                cout << "    name = " << all_tasks.back().name << endl;
-                cout << "    time_end = " << all_tasks.back().time_end << endl;
-                cout << "    id = " << all_tasks.back().id << endl;
 
                 readingtask = false;
                 fill_n(filled_field, 4, false);

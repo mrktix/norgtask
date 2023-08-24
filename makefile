@@ -1,10 +1,17 @@
 all:
+	make testing
+
+testing:
+	make asan
+	make tsan
+	make msan
+
+install:
 	clang++ \
 		-fsanitize=address \
-		-fno-omit-frame-pointer -g \
 		-std=c++17 \
 		-lncurses \
-		src/*.cpp -o bin/norgtask
+		src/*.cpp -o ~/.local/bin/norgtask
 
 asan:
 	clang++ \

@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 #include <ncurses.h>
 
@@ -20,7 +21,7 @@ class Ui {
         void draw_outline();
         void draw_tasks();
         void draw_contexts();
-        string task_format(task t);
+        void print_task(task t);
         bool input();
 
         const Config* config;
