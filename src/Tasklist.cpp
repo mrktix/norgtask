@@ -80,7 +80,7 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
 
     int folder_col; //col from 1 to 8
 
-    //loop through the directories in norg workspace
+    // loop through the directories in norg workspace
     for (const filesystem::path entry : filesystem::directory_iterator(norg_workspace)) {
         cout << "Tasklist::load_norg_workspace(): first for loop begin, dir: " << entry.string() << endl;
         if (!filesystem::is_directory(entry)) continue;
@@ -107,7 +107,7 @@ void Tasklist::load_norg_workspace(filesystem::path norg_workspace) {
             subcon.name = subentry_name;
             subcon.id_begin = current_id;
             
-            current_id = load_norg_file(subentry, current_id, con.name, subentry_name);
+            current_id = load_norg_file(subentry, current_id, con.name, subentry_name, folder_col%8 + 1, file_col%8 + 1);
 
             subcon.id_end = current_id;
             con.children.push_back(subcon);
@@ -166,8 +166,9 @@ int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, s
                 }
 
                 int path_len = 3;
-                all_tasks.back().folder = folder.substr(0, path_len);
-                all_tasks.back().file = file.substr(0, path_len);
+                all_tasks.back().folder = folder_name.substr(0, path_len);
+                all_tasks.back().file = file_name.substr(0, path_len);
+                all_tasks.back().tag = all_tasks.back().tag.substr(0, path_len);
                 all_tasks.back().folder_color = folder_col;
                 all_tasks.back().file_color = file_col;
 

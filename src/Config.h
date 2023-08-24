@@ -10,9 +10,9 @@ using namespace std;
 
 class Config {
     public:
-        Config(filesystem::path config_path);
-        string option(string key);
-        string path(string key);
+        Config(std::filesystem::path config_path);
+        string option(string key) const;
+        filesystem::path path(string key) const;
     private:
         unordered_map<string, string> options;
 };

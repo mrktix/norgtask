@@ -4,6 +4,7 @@
 #include "Config.h"
 
 #include <vector>
+#include <memory>
 
 #include <ncurses.h>
 
@@ -11,7 +12,7 @@ using namespace std;
 
 class Ui {
     public:
-        Ui(Config* config);
+        Ui(const Config* config);
         bool draw(bool collect_input);
     private:
         string format_task_name(task t);
@@ -22,8 +23,8 @@ class Ui {
         string task_format(task t);
         bool input();
 
-        Tasklist* tasklist;
-        Config* config;
+        const Config* config;
+        Tasklist tasklist;
         vector<task> sorted_tasks;
 
         enum mode { tasks, contexts };

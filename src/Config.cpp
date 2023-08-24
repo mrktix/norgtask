@@ -33,14 +33,14 @@ Config::Config(filesystem::path config_path) {
     file.close();
 }
 
-string Config::option(string key) {
-    return options[key];
+string Config::option(string key) const {
+    return options.find(key)->second;
 }
 
-string Config::path(string key) {
-    string ret = options[key];
+filesystem::path Config::path(string key) const {
+    string ret = options.find(key)->second;
     if (ret[0] == '~') {
         ret = getenv("HOME") + ret.substr(1);
     }
-    return ret;
+    return (filesystem::path) ret;
 }

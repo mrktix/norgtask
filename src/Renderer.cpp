@@ -5,6 +5,7 @@
 #include "Ui.h"
 
 #include <ncurses.h>
+#include <memory>
 
 using namespace std;
 
@@ -14,8 +15,8 @@ int Renderer::run(int argc, char** argv) {
     configpathstr += "/norgtask/config";
 
     filesystem::path configpath = configpathstr;
-    Config* config = new Config(configpath);
-    Ui* ui = new Ui(config);
+    unique_ptr<Config> config(new Config(configpath));
+    unique_ptr<Ui> ui(new Ui(config.get()));
 
     ui->draw(false);
     while(true) {

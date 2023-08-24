@@ -1,10 +1,9 @@
 #include "Ui.h"
 
-Ui::Ui(Config* config) {
-    this->config = config;
+Ui::Ui(const Config* config_passed)
+:config(config_passed), tasklist(config->path("norg_workspace"))
+{
     current_mode = tasks;
-    endwin();
-    tasklist = new Tasklist((filesystem::path) config->path("norg_workspace"));
 }
 
 bool Ui::input() {
@@ -48,7 +47,7 @@ void Ui::draw_tasks() {
 
     int available_lines = maxy-2;
     cout << "Ui::draw_tasks(): about to access tasklist public field" << endl;
-    int task_count = tasklist->current_tasks_sorted.size();
+    int task_count = tasklist.current_tasks_sorted.size();
     int end = min(available_lines, task_count);
 
     cout << "availines:" << available_lines << endl;
@@ -57,12 +56,14 @@ void Ui::draw_tasks() {
     cout << "Ui::draw_tasks(): amount of lines to print: " << end << endl;
 
     for (int i = 0; i < end; i++) {
-        mvprintw(i+1, 1, (tasklist->current_tasks_sorted)[i].name.c_str());
+        string taskstr = task_format(tasklist.current_tasks_sorted[i]);
+        mvprintw(i+1, 1, taskstr.c_str());
     }
 }
 
 string Ui::task_format(task t) {
-
+    string ret = t.folder + "/" + t.file + "/" + t.name + " (" + t.tag + ")";
+    return ret;
 }
 
 void Ui::draw_contexts() {
