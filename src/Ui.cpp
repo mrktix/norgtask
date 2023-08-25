@@ -63,8 +63,8 @@ void Ui::print_task(task t) {
 
     time_t utime = t.time_end;
     struct tm *tm = localtime(&utime);
-    char datestr[12];
-    strftime(datestr, sizeof(datestr), " %d-%m-%Y", tm);
+    char datestr[18];
+    strftime(datestr, sizeof(datestr), " %a - %d.%m.%Y", tm);
 
     string context_name_tag = folder + "/" + file + " " + t.name + " (" + t.tag + ")";
 
