@@ -56,10 +56,30 @@ void Ui::draw_tasks() {
 void Ui::print_task(task t) {
     int folder_col = t.folder_color%6+1;
     int file_col = t.file_color%6+1;
+    int time_col = (t.time_end/86400)%6+1;
+
     string folder = t.folder.substr((t.folder[0] == '.')? 1 : 0, 3);
     string file = t.file.substr((t.file[0] == '.')? 1 : 0, 3);
 
-    string final = folder + "/" + file + " " + t.name + " (" + t.tag + ")";
+    time_t utime = t.time_end;
+    struct tm *tm = localtime(&utime);
+    char datestr[12];
+    strftime(datestr, sizeof(datestr), " %d-%m-%Y", tm);
+
+    string context_name_tag = folder + "/" + file + " " + t.name + " (" + t.tag + ")";
+
+    string final;
+
+    for (int i = 0; i < maxx - 2; i++) {
+        if (i < context_name_tag.length()) {
+            final += context_name_tag[i];
+        } else if (i > maxx - 2 - sizeof(datestr)) {
+            final += datestr[i - maxx + 1 + sizeof(datestr)];
+        } else {
+            if (i%2 == 0 || i == context_name_tag.length()) final += ' ';
+            else final += '-';
+        }
+    }
 
     attron(COLOR_PAIR(folder_col));
     printw(final.substr(0,4).c_str());
@@ -69,7 +89,11 @@ void Ui::print_task(task t) {
     printw(final.substr(4,4).c_str());
     attroff(COLOR_PAIR(file_col));
 
-    printw(final.substr(8, maxx - 2 - 8).c_str());
+    printw(final.substr(8, maxx - 2 - 8 - sizeof(datestr)).c_str());
+
+    attron(COLOR_PAIR(time_col));
+    printw(final.substr(maxx - 2 - sizeof(datestr)).c_str());
+    attroff(COLOR_PAIR(time_col));
 }
 
 void Ui::draw_contexts() {
