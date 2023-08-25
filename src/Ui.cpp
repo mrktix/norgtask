@@ -89,10 +89,10 @@ void Ui::print_task(task t) {
     printw(final.substr(4,4).c_str());
     attroff(COLOR_PAIR(file_col));
 
-    printw(final.substr(8, maxx - 2 - 8 - sizeof(datestr)).c_str());
+    printw(final.substr(8, context_name_tag.length()-8).c_str());
 
     attron(COLOR_PAIR(time_col));
-    printw(final.substr(maxx - 2 - sizeof(datestr)).c_str());
+    printw(final.substr(context_name_tag.length()).c_str());
     attroff(COLOR_PAIR(time_col));
 }
 
