@@ -92,14 +92,19 @@ void Tasklist::load_norg_workspace() {
             current_id = load_norg_file(subentry, current_id, con.name, folder_col, file_col);
 
             subcon.id_end = current_id;
-            con.children.push_back(subcon);
 
-            file_col++;
+            if (subcon.id_end > subcon.id_begin) {
+                con.children.push_back(subcon);
+                file_col++;
+            }
         }
 
         con.id_end = current_id;
-        root_context.children.push_back(con);
-        folder_col++;
+
+        if (con.id_end > con.id_begin) {
+            root_context.children.push_back(con);
+            folder_col++;
+        }
     }
 
     root_context.id_end = current_id;
