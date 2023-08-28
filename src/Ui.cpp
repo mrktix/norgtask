@@ -64,10 +64,11 @@ void Ui::print_task(task t) {
     time_t utime = t.time_end;
     struct tm *tm = localtime(&utime);
     char datestr[24]; //
-    strftime(datestr, sizeof(datestr), " %a %H:%M - %d.%m.%Y", tm);
+    strftime(datestr, sizeof(datestr), " %a %H:%M ~ %d.%m.%Y", tm);
 
     string context_name_tag = folder + "/" + file + " " + t.name;
     if (t.tag != "none") context_name_tag += " (" + t.tag + ")";
+    context_name_tag += " ";
 
     string final;
 
@@ -77,8 +78,9 @@ void Ui::print_task(task t) {
         } else if (i > maxx - 2 - sizeof(datestr)) {
             final += datestr[i - maxx + 1 + sizeof(datestr)];
         } else {
-            if (i%2 == 0 || i == context_name_tag.length()) final += ' ';
-            else final += '-';
+            /* if (i%2 == 0) final += " "; */
+            /* else final += "."; */
+            final += ".";
         }
     }
 
