@@ -68,11 +68,11 @@ bool Ui::print_task(task t, timerange& trng) {
         trng = day;
         attron(COLOR_PAIR(7)); printw("....... today"); attroff(COLOR_PAIR(7));
         return false;
-    } else if (daystilldue > 0 && trng == day) {
+    } else if (daystilldue > 0 && (trng == day || trng == before)) {
         trng = week;
         attron(COLOR_PAIR(7)); printw("....... this week"); attroff(COLOR_PAIR(7));
         return false;
-    } else if (daystilldue > 7 && trng == week) {
+    } else if (daystilldue > 7 && (trng == week || trng == day || trng == before)) {
         trng = year;
         attron(COLOR_PAIR(7)); printw("....... this year"); attroff(COLOR_PAIR(7));
         return false;
