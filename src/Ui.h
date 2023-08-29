@@ -16,19 +16,21 @@ class Ui {
         Ui(const Config* config);
         bool draw(bool collect_input);
     private:
+        enum mode { tasks, contexts };
+        enum timerange { before, day, week, year };
+
         string format_task_name(task t);
         void update_vars();
         void draw_outline();
         void draw_tasks();
         void draw_contexts();
-        void print_task(task t);
+        bool print_task(task t, timerange& trng);
         bool input();
 
         const Config* config;
         Tasklist tasklist;
         vector<task> sorted_tasks;
 
-        enum mode { tasks, contexts };
         mode current_mode;
         int maxx, maxy;
 };

@@ -28,7 +28,9 @@ int init_curses() {
     init_pair(4,  4, -1); // blue
     init_pair(5,  5, -1); // purple
     init_pair(6,  6, -1); // aqua
-    init_pair(7,  0, -1); // black
+    init_pair(7,  7, -1); // gray
+    
+    init_pair(15,  0, -1); // black
     
     return 0;
 }

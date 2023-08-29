@@ -49,13 +49,35 @@ void Ui::draw_tasks() {
 
     task t = tasklist.current_tasks_sorted[tasklist.current_tasks_sorted.size()];
 
+    timerange trng = before;
+
+    int offset = 0;
     for (int i = 0; i < end; i++) {
         move(i+1, 1);
-        print_task(tasklist.current_tasks_sorted[i]);
+        if (!print_task(tasklist.current_tasks_sorted[i-offset], trng)) {
+            offset++; //reprint the same task
+            end = min(available_lines, end+1); //make sure we get to the end of the list, if the screen space allows
+        }
     }
 }
 
-void Ui::print_task(task t) {
+bool Ui::print_task(task t, timerange& trng) {
+    long daystilldue = t.time_end/86400 - Time::utime()/86400 + 1;
+
+    if (daystilldue == 0 && trng == before) {
+        trng = day;
+        attron(COLOR_PAIR(7)); printw("....... today"); attroff(COLOR_PAIR(7));
+        return false;
+    } else if (daystilldue > 0 && trng == day) {
+        trng = week;
+        attron(COLOR_PAIR(7)); printw("....... this week"); attroff(COLOR_PAIR(7));
+        return false;
+    } else if (daystilldue > 7 && trng == week) {
+        trng = year;
+        attron(COLOR_PAIR(7)); printw("....... this year"); attroff(COLOR_PAIR(7));
+        return false;
+    }
+
     int folder_col = t.folder_color%6+1;
     int file_col = t.file_color%6+1;
     int time_col = (t.time_end/86400)%6+1;
@@ -104,6 +126,8 @@ void Ui::print_task(task t) {
     attron(COLOR_PAIR(time_col));
     printw(final.substr(context_name_tag.length()).c_str());
     attroff(COLOR_PAIR(time_col));
+
+    return true;
 }
 
 void Ui::draw_contexts() {

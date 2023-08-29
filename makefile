@@ -20,7 +20,6 @@ asan:
 		-std=c++17 \
 		-lncurses \
 		src/*.cpp -o bin/asan
-	./bin/asan
 
 tsan:
 	clang++ \
@@ -29,7 +28,6 @@ tsan:
 		-std=c++17 \
 		-lncurses \
 		src/*.cpp -o bin/tsan
-	./bin/tsan
 
 msan:
 	clang++ \
@@ -38,4 +36,3 @@ msan:
 		-std=c++17 \
 		-lncurses \
 		src/*.cpp -o bin/msan
-	./bin/msan
