@@ -17,7 +17,7 @@ class Ui {
         bool draw(bool collect_input);
     private:
         enum mode { tasks, contexts };
-        enum timerange { before, day, week, year };
+        enum timerange { before, today, tommorow, week, year };
 
         string format_task_name(task t);
         void update_vars();
