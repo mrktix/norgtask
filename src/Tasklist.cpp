@@ -149,7 +149,7 @@ int Tasklist::load_norg_file(const filesystem::path norg_file, int current_id, s
                     all_tasks.back().time_begin = 0;
                 }
                 if (!filled_field[end]) {
-                    all_tasks.back().time_end = LONG_MAX;
+                    all_tasks.back().time_end = Time::utime() + 60000000000; //2000 years into the future
                 }
 
                 all_tasks.back().folder = folder_name;

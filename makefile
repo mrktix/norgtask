@@ -10,6 +10,7 @@ install:
 		-fsanitize=address \
 		-std=c++17 \
 		-lncurses \
+		-s \
 		src/*.cpp -o ~/.local/bin/norgtask
 
 asan:

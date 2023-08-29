@@ -47,6 +47,8 @@ void Ui::draw_tasks() {
     int task_count = tasklist.current_tasks_sorted.size();
     int end = min(available_lines, task_count);
 
+    task t = tasklist.current_tasks_sorted[tasklist.current_tasks_sorted.size()];
+
     for (int i = 0; i < end; i++) {
         move(i+1, 1);
         print_task(tasklist.current_tasks_sorted[i]);
@@ -63,8 +65,13 @@ void Ui::print_task(task t) {
 
     time_t utime = t.time_end;
     struct tm *tm = localtime(&utime);
-    char datestr[24]; //
-    strftime(datestr, sizeof(datestr), " %a %H:%M ~ %d.%m.%Y", tm);
+    char datestr[24];
+
+    if (t.time_end < Time::utime() + 45000000000) { //earlier than 1500 years into future
+        strftime(datestr, sizeof(datestr), " %a %H:%M ~ %d.%m.%Y", tm);
+    } else {
+        datestr[0] = 0;
+    }
 
     string context_name_tag = folder + "/" + file + " " + t.name;
     if (t.tag != "none") context_name_tag += " (" + t.tag + ")";
