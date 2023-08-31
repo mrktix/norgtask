@@ -60,21 +60,33 @@ void Ui::draw_tasks() {
 bool Ui::print_task(task t, timerange& trng) {
     long daystilldue = t.time_end/86400 - Time::utime()/86400 + 1;
 
+    string timesep = "======= ";
+    bool ret = false;
+
     if (daystilldue == 0 && trng == before) {
         trng = today;
-        attron(COLOR_PAIR(15)); printw("... TODAY ..."); attroff(COLOR_PAIR(15));
-        return false;
+        timesep += "TODAY";
+        ret = true;
     } else if (daystilldue == 1 && (trng == today || trng == before)) {
         trng = tommorow;
-        attron(COLOR_PAIR(7)); printw("... TOMMOROW ..."); attroff(COLOR_PAIR(7));
-        return false;
+        timesep += "TOMMOROW";
+        ret = true;
     } else if (daystilldue > 1 && (trng == tommorow || trng == today || trng == before)) {
         trng = week;
-        attron(COLOR_PAIR(7)); printw("... THIS WEEK ..."); attroff(COLOR_PAIR(7));
-        return false;
+        timesep += "THIS WEEK";
+        ret = true;
     } else if (daystilldue > 7 && (trng == week || trng == tommorow || trng == today || trng == before)) {
         trng = year;
-        attron(COLOR_PAIR(7)); printw("... THIS YEAR ..."); attroff(COLOR_PAIR(7));
+        timesep += "THIS YEAR";
+        ret = true;
+    }
+
+    if (ret) {
+        timesep += " ";
+        while (timesep.length() < maxx) {
+            timesep += "=";
+        }
+        attron(COLOR_PAIR(7)); printw(timesep.c_str()); attroff(COLOR_PAIR(7));
         return false;
     }
 
@@ -99,7 +111,7 @@ bool Ui::print_task(task t, timerange& trng) {
     }
 
     string context_name_tag = folder + "/" + file + " " + t.name;
-    if (t.tag != "none") context_name_tag += " (" + t.tag + ")";
+    if (t.tag != "none" && t.tag != "event") context_name_tag += " (" + t.tag + ")";
     context_name_tag += " ";
 
     string final;
