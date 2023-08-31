@@ -86,7 +86,9 @@ bool Ui::print_task(task t, timerange& trng) {
         while (timesep.length() < maxx) {
             timesep += "=";
         }
-        attron(COLOR_PAIR(7)); printw(timesep.c_str()); attroff(COLOR_PAIR(7));
+        attron(COLOR_PAIR(7));
+        printw(timesep.c_str());
+        attroff(COLOR_PAIR(7));
         return false;
     }
 
