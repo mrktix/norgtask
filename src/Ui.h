@@ -21,7 +21,6 @@ class Ui {
 
         string format_task_name(task t);
         void update_vars();
-        void draw_outline();
         void draw_tasks();
         void draw_contexts();
         bool print_task(task t, timerange& trng);
