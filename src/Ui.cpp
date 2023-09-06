@@ -94,8 +94,8 @@ bool Ui::print_task(task t, timerange& trng) {
 
     bool event = t.tag == "event";
 
-    int folder_col = (event)? 7 : t.folder_color%6+1;
-    int file_col = (event)? 7 : t.file_color%6+1;
+    int folder_col = t.folder_color%6+1;
+    int file_col = t.file_color%6+1;
     int time_col = (event)? 7 : (t.time_end/86400)%6+1;
     int name_col = (event)? 7 : 0;
 
