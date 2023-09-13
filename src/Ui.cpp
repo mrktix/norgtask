@@ -43,8 +43,6 @@ void Ui::draw_tasks() {
     int task_count = tasklist.current_tasks_sorted.size();
     int end = min(available_lines, task_count);
 
-    task t = tasklist.current_tasks_sorted[tasklist.current_tasks_sorted.size()];
-
     timerange trng = before;
 
     int offset = 0;
