@@ -51,6 +51,7 @@ void Ui::draw_tasks() {
         if (!print_task(tasklist.current_tasks_sorted[i-offset], trng)) {
             offset++; //reprint the same task
             end = min(available_lines, end+1); //make sure we get to the end of the list, if the screen space allows
+            end = min(end, task_count);
         }
     }
 }
